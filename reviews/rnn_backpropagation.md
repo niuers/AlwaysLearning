@@ -20,6 +20,11 @@ This reviews the backpropagation algorithm used in both RNN and LSTM networks. I
 
 ### RNN Cell
 
+
+![RNN CELL](https://github.com/niuers/LearningMachineLearning/blob/master/resources/rnn_cell.png)
+Figure 1. RNN cell for a single time-step computation. Inputs are <a href="https://www.codecogs.com/eqnedit.php?latex=\inline&space;a^{\left&space;\langle&space;t-1&space;\right&space;\rangle}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\inline&space;a^{\left&space;\langle&space;t-1&space;\right&space;\rangle}" title="a^{\left \langle t-1 \right \rangle}" /></a> (hidden state from previous time step) and <a href="https://www.codecogs.com/eqnedit.php?latex=\inline&space;x^{\left&space;\langle&space;t&space;\right&space;\rangle}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\inline&space;x^{\left&space;\langle&space;t&space;\right&space;\rangle}" title="x^{\left \langle t \right \rangle}" /></a> (input data at current time step *t*). The outputs are activation <a href="https://www.codecogs.com/eqnedit.php?latex=\inline&space;a^{\left&space;\langle&space;t&space;\right&space;\rangle}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\inline&space;a^{\left&space;\langle&space;t&space;\right&space;\rangle}" title="a^{\left \langle t \right \rangle}" /></a>, which can also be used to predict <a href="https://www.codecogs.com/eqnedit.php?latex=\inline&space;y^{\left&space;\langle&space;t&space;\right&space;\rangle}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\inline&space;y^{\left&space;\langle&space;t&space;\right&space;\rangle}" title="y^{\left \langle t \right \rangle}" /></a>.
+
+
 ### RNN Forward Propagation
 ### RNN Backpropagation
 
