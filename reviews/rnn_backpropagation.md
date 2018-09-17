@@ -1,7 +1,7 @@
 
 # RNN and LSTM BackPropagation Algorithm
 
-This reviews the backpropagation algorithm used in both RNN and LSTM networks. This follows Andrew Ng's course: Sequence Models at coursera.org closely.
+This reviews the backpropagation algorithm used in both RNN and LSTM networks. It duplicates Andrew Ng's course: Sequence Models at coursera.org closely.
 
 ## RNN BackPropagation Algorithm
 
@@ -18,6 +18,10 @@ This reviews the backpropagation algorithm used in both RNN and LSTM networks. T
 - Lowerscript *i* denotes the <a href="https://www.codecogs.com/eqnedit.php?latex=\inline&space;i^{th}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\inline&space;i^{th}" title="i^{th}" /></a> entry of a vector.
     - Example: <a href="https://www.codecogs.com/eqnedit.php?latex=\inline&space;a_{i}^{[l]}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\inline&space;a_{i}^{[l]}" title="a_{i}^{[l]}" /></a> denotes the <a href="https://www.codecogs.com/eqnedit.php?latex=\inline&space;i^{th}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\inline&space;i^{th}" title="i^{th}" /></a> entry of the activations in layer *l*.
 
+### RNN Cell
+
+### RNN Forward Propagation
+### RNN Backpropagation
 
 ## LSTM BackPropagation Algorithm
 
