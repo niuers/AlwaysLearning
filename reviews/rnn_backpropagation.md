@@ -1,11 +1,9 @@
 
-# RNN and LSTM BackPropagation Algorithm
+# RNN and LSTM Neural Networks
 
 This reviews the backpropagation algorithm used in both RNN and LSTM networks. It duplicates Andrew Ng's course: Sequence Models at coursera.org closely.
 
-## RNN BackPropagation Algorithm
-
-### Notations [1]:
+## Notations [1]:
 - Superscript <a href="https://www.codecogs.com/eqnedit.php?latex=[l]" target="_blank"><img src="https://latex.codecogs.com/gif.latex?[l]" title="[l]" /></a> denotes an object associated with the <a href="https://www.codecogs.com/eqnedit.php?latex=l{^{th}}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?l{^{th}}" title="l{^{th}}" /></a> layer. 
     - Example: <a href="https://www.codecogs.com/eqnedit.php?latex=\inline&space;a^{[4]}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\inline&space;a^{[4]}" title="a^{[4]}" /></a> is the <a href="https://www.codecogs.com/eqnedit.php?latex=\inline&space;4^{th}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\inline&space;4^{th}" title="4^{th}" /></a> layer activation. 
 
@@ -17,6 +15,8 @@ This reviews the backpropagation algorithm used in both RNN and LSTM networks. I
     
 - Lowerscript *i* denotes the <a href="https://www.codecogs.com/eqnedit.php?latex=\inline&space;i^{th}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\inline&space;i^{th}" title="i^{th}" /></a> entry of a vector.
     - Example: <a href="https://www.codecogs.com/eqnedit.php?latex=\inline&space;a_{i}^{[l]}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\inline&space;a_{i}^{[l]}" title="a_{i}^{[l]}" /></a> denotes the <a href="https://www.codecogs.com/eqnedit.php?latex=\inline&space;i^{th}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\inline&space;i^{th}" title="i^{th}" /></a> entry of the activations in layer *l*.
+
+## RNN Neural Network
 
 ### RNN Cell
 
@@ -32,8 +32,13 @@ Figure 2. RNN forward diagram. The input sequence <a href="https://www.codecogs.
 
 ### RNN Backpropagation
 
-## LSTM BackPropagation Algorithm
+## LSTM Neural Network
 
+### LSTM Cell
+
+### LSTM Forward
+
+### LSTM BackPropagation
 
 
 
