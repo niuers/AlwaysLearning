@@ -1,4 +1,4 @@
-# Learning Machine Learning
-Study notes to understand machine learning and neural network techniques
+# Always Learning
+Study notes to understand whatever I am learning now: programming, machine learning, neural network, math etc.
 
-α+β≡μ
+
