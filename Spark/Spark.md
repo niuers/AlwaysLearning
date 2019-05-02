@@ -435,3 +435,21 @@ This feature is disabled by default and available on all coarse-grained cluster 
 One of the more important considerations is the number and type of applications you intend to be running. For instance, YARN is great for HDFS-based applications but is not commonly used for much else. Additionally, it’s not well designed to support the cloud, because it expects information to be available on HDFS. Also, compute and storage is largely coupled together, meaning that scaling your cluster involves scaling both storage and compute instead of just one or the other. Mesos does improve on this a bit conceptually, and it supports a wide range of application types, but it still requires pre-provisioning machines and, in some sense, requires buy-in at a much larger scale. For instance, it doesn’t really make sense to have a Mesos cluster for only running Spark Applications. Spark standalone mode is the lightest-weight cluster manager and is relatively simple to understand and take advantage of, but then you’re going to be building more application management infrastructure that you could get much more easily by using YARN or Mesos.
 
 Typically Spark stores shuffle blocks (shuffle output) on a local disk on that particular node.
+
+
+# Job Monitoring
+## JVM
+Spark runs the executors in individual Java Virtual Machines (JVMs). Therefore, the next level of detail would be to monitor the individual virtual machines (VMs) to better understand how your code is running. JVM utilities such as jstack for providing stack traces, jmap for creating heap-dumps, jstat for reporting time–series statistics, and jconsole for visually exploring various JVM properties are useful for those comfortable with JVM internals. You can also use a tool like jvisualvm to help profile Spark jobs.
+
+There are two main things you will want to monitor: the processes running your application (at the level of CPU usage, memory usage, etc.), and the query execution inside it (e.g., jobs and tasks).
+
+## Driver and Executor Processes
+When you’re monitoring a Spark application, you’re definitely going to want to keep an eye on the driver. This is where all of the state of your application lives, and you’ll need to be sure it’s running in a stable manner. To help with this challenge, Spark has a configurable metrics system based on the Dropwizard Metrics Library. The metrics system is configured via a configuration file that Spark expects to be present at $SPARK_HOME/conf/metrics.properties. A custom file location can be specified by changing the spark.metrics.conf configuration property. 
+
+## Queries, Jobs, Stages, and Tasks
+
+## Spark Logs
+One challenge, however, is that Python won’t be able to integrate directly with Spark’s Java-based logging library. Using Python’s logging module or even simple print statements will still print the results to standard error, however, and make them easy to find.
+
+
+
