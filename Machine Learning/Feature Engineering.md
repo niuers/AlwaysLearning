@@ -71,6 +71,16 @@ ax = fig.gca()
 
 df.groupby('col1')[['col2']].mean().sort_values('col2', ascending=False).tail(20).plot.bar(stacked=False, ax=ax, color='darkorange')
 ```
+## Numerical Data
+1. The first sanity check for numeric data is whether the magnitude matters. Do we just need to know whether it’s positive or negative? Or perhaps we only need to know the magnitude at a very coarse granularity? This sanity check is particularly important for automatically accrued numbers such as counts—the number of daily visits to a website, the number of reviews garnered by a restaurant, etc.
+1. Next, consider the scale of the features. Models that are smooth functions of input features are sensitive to the scale of the input.
+Logical functions, on the other hand, are not sensitive to input feature scale. Another example of a logical function is the step function (e.g., is input x greater than 5?). Decision tree models consist of step functions of input features. Hence, models based on space-partitioning trees (decision trees, gradient boosted machines, random forests) are not sensitive to scale. 
+
+The only exception is if the scale of the input grows over time, which is the case if the feature is an accumulated count of some sort—eventually it will grow outside of the range that the tree was trained on. If this might be the case, then it might be necessary to rescale the inputs periodically. Another solution is the bin-counting method
+
+1. It’s also important to consider the distribution of numeric features. 
+The distribution of input features matters to some models more than others. For instance, the training process of a linear regression model assumes that prediction errors are distributed like a Gaussian. This is usually fine, except when the prediction target spreads out over several orders of magnitude. In this case, the Gaussian error assumption likely no longer holds. One way to deal with this is to transform the output target in order to tame the magnitude of the growth. (Strictly speaking this would be target engineering, not feature engineering.) Log transforms, which are a type of power transform, take the distribution of the variable closer to Gaussian.
+
 
 
 ## Structured Data Type
@@ -111,6 +121,7 @@ from sklearn.preprocessing import Imputer
 1. K-Means Clustering - same reasoning as KNN
 1. Logistic regression, SVM, neural networks - if you are using gradient descent to learn weights
 1. Principal component analysis - eigen vectors will be skewed towards larger columns
+1. RBF Kernels, and anything that uses the Euclidean distance.
 
 ### Encoding Categorical Data
 1. Encoding at the nominal level
