@@ -81,6 +81,85 @@ The only exception is if the scale of the input grows over time, which is the ca
 1. It’s also important to consider the distribution of numeric features. 
 The distribution of input features matters to some models more than others. For instance, the training process of a linear regression model assumes that prediction errors are distributed like a Gaussian. This is usually fine, except when the prediction target spreads out over several orders of magnitude. In this case, the Gaussian error assumption likely no longer holds. One way to deal with this is to transform the output target in order to tame the magnitude of the growth. (Strictly speaking this would be target engineering, not feature engineering.) Log transforms, which are a type of power transform, take the distribution of the variable closer to Gaussian.
 
+### Feature space vs Data space
+Collectively, a collection of data can be visualized in feature space as a point cloud. Conversely, we can visualize features in data space. 
+
+### Dealing with Counts
+It is a good idea to check the scale and determine whether to keep the data as raw numbers, convert them into binary values to indicate presence, or bin them into coarser granularity. 
+
+1. Binarization
+1. Quantization or Binning. Raw counts that span several orders of magnitude are problematic for many models. In a linear model, the same linear coefficient would have to work for all possible values of the count. Large counts could also wreak havoc in unsupervised learning methods such as k-means clustering, which uses Euclidean distance as a similarity function to measure the similarity between data points. A large count in one element of the data vector would outweigh the similarity in all other elements, which could throw off the entire similarity measurement.
+One solution is to contain the scale by quantizing the count. In other words, we group the counts into bins, and get rid of the actual count values. Quantization maps a continuous number to a discrete one. We can think of the discretized numbers as an ordered sequence of bins that represent a measure of intensity.
+
+In order to quantize data, we have to decide how wide each bin should be. The solutions fall into two categories: fixed-width or adaptive. 
+   1. FIXED-WIDTH BINNING: With fixed-width binning, each bin contains a specific numeric range. The ranges can be custom designed or automatically segmented, and they can be linearly scaled or exponentially scaled. To map from the count to the bin, we simply divide by the width of the bin and take the integer part. When the numbers span multiple magnitudes, it may be better to group by powers of 10 (or powers of any constant): 0–9, 10–99, 100–999, 1000–9999, etc. The bin widths grow exponentially, going from O(10), to O(100), O(1000), and beyond. To map from the count to the bin, we take the log of the count. Exponential-width binning is very much related to the log transform
+   1. QUANTILE BINNING: But if there are large gaps in the counts, then there will be many empty bins with no data. This problem can be solved by adaptively positioning the bins based on the distribution of the data. This can be done using the quantiles of the distribution. 
+  
+### Log Transformation
+The log function compresses the range of large numbers and expands the range of small numbers. The larger x is, the slower log(x) increments. The log transform is a powerful tool for dealing with positive numbers with a heavy-tailed distribution.
+
+### Power Transforms: Generalization of the Log Transform
+The log transform is a specific example of a family of transformations known as power transforms. In statistical terms, these are variance-stabilizing transformations. To understand why variance stabilization is good, consider the Poisson distribution. This is a heavy-tailed distribution with a variance that is equal to its mean: hence, the larger its center of mass, the larger its variance, and the heavier the tail. Power transforms change the distribution of the variable so that the variance is no longer dependent on the mean. For example, suppose a random variable X has the Poisson distribution. If we transform X by taking its square root, the variance of X˜=sqrt(X) is roughly constant, instead of being equal to the mean.
+
+A simple generalization of both the square root transform and the log transform is known as the Box-Cox transform
+Setting λ to be less than 1 compresses the higher values, and setting λ higher than 1 has the opposite effect.
+
+The Box-Cox formulation only works when the data is positive. For nonpositive data, one could shift the values by adding a fixed constant. When applying the Box-Cox transformation or a more general power transform, we have to determine a value for the parameter λ. This may be done via maximum likelihood (finding the λ that maximizes the Gaussian likelihood of the resulting transformed signal) or Bayesian methods. A full treatment of the usage of Box-Cox and general power transforms is outside the scope of this book. Interested readers may find more information on power transforms in Econometric Methods by Johnston and DiNardo (1997).
+
+* A probability plot, or probplot, is an easy way to visually compare an empirical distribution of data against a theoretical distribution. This is essentially a scatter plot of observed versus theoretical quantiles. 
+
+## Feature Scaling or Normalization/feature normalization
+
+### Min-Max Scaling
+### Standardization (Variance Scaling)
+### DON’T “CENTER” SPARSE DATA!
+Use caution when performing min-max scaling and standardization on sparse features. Both subtract a quantity from the original feature value. For min-max scaling, the shift is the minimum over all values of the current feature; for standardization, it is the mean. If the shift is not zero, then these two transforms can turn a sparse feature vector where most values are zero into a dense one. This in turn could create a huge computational burden for the classifier, depending on how it is implemented (not to mention that it would be horrendous if the representation now included every word that didn’t appear in a document!). Bag-of-words is a sparse representation, and most classification libraries optimize for sparse inputs.
+### ℓ^2 Normalization
+This technique normalizes (divides) the original feature value by what’s known as the ℓ^2 norm, also known as the Euclidean norm. 
+
+After ℓ2 normalization, the feature column has norm 1. This is also sometimes called ℓ2 scaling.
+
+* No matter the scaling method, feature scaling always divides the feature by a constant (known as the normalization constant). Therefore, it does not change the shape of the single-feature distribution. 
+
+## Interaction Features
+* A simple pairwise interaction feature is the product of two features. The analogy is the logical AND.
+Decision tree–based models get this for free, but generalized linear models often find interaction features very helpful.
+
+* The training and scoring time of a linear model with pairwise interaction features would go from O(n) to O(n2), where n is the number of singleton features.
+
+There are a few ways around the computational expense of higher-order interaction features. One could perform feature selection on top of all of the interaction features. Alternatively, one could more carefully craft a smaller number of complex features.
+
+## Feature Selection
+### Filtering
+
+Filtering techniques preprocess features to remove ones that are unlikely to be useful for the model. For example, one could compute the correlation or mutual information between each feature and the response variable, and filter out the features that fall below a threshold.
+
+Filtering techniques are much cheaper than the wrapper techniques described next, but they do not take into account the model being employed. Hence, they may not be able to select the right features for the model. It is best to do prefiltering conservatively, so as not to inadvertently eliminate useful features before they even make it to the model training step.
+
+### Wrapper methods
+
+The wrapper method treats the model as a black box that provides a quality score of a proposed subset for features. There is a separate method that iteratively refines the subset.
+
+### Embedded methods
+These methods perform feature selection as part of the model training process. For example, a decision tree inherently performs feature selection because it selects one feature on which to split the tree at each training step. Another example is the ℓ1 regularizer, which can be added to the training objective of any linear model. The ℓ1 regularizer encourages models that use a few features as opposed to a lot of features, so it’s also known as a sparsity constraint on the model. Embedded methods incorporate feature selection as part of the model training process. 
+
+A full treatment of feature selection is outside the scope of this book. Interested readers may refer to the survey paper by Guyon and Elisseeff (2003).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 ## Structured Data Type
