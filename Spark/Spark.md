@@ -772,6 +772,11 @@ For the most part, there are not too many ways that you can optimize specific ag
 The basic premise is that if some large piece of data will be used across multiple UDF calls in your program, you can broadcast it to save just a single read-only copy on each node and avoid re-sending this data with each job. For example, broadcast variables may be useful to save a lookup table or a machine learning model. You can also broadcast arbitrary objects by creating broadcast variables using your SparkContext, and then simply refer to those variables in your tasks.
 
 
+## Others
+If you’re using the structured APIs, your code should run just about as fast as if you had written it in Scala, except if you’re not using UDFs in Python. If you’re using a UDF, you may have a performance impact. Refer back to Chapter 6 for more information on why this is the case.
+
+If you’re using the unstructured APIs, specifically RDDs, then your performance is going to suffer (at the cost of a bit more flexibility). We touch on this reasoning in Chapter 12, but the fundamental idea is that Spark is going to have to work a lot harder converting information from something that Spark and the JVM can understand to Python and back again. This includes both functions as well as data and is a process known as serialization. We’re not saying it never makes sense to use them; it’s just something to be aware of when doing so.
+
 
 
 
