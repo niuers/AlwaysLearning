@@ -306,3 +306,22 @@ Mastering a subject is not just about knowing the definitions and being able to 
 
 
 # Text Data: Flattening, Filtering, and Chunking
+
+## Bag of Words
+* The ordering of words in the vector is not important, as long as it is consistent for all documents in the dataset. Neither does bag-of-words represent any concept of word hierarchy.
+
+* Sometimes it is also informative to look at feature vectors in data space. A feature vector contains the value of the feature in each data point. The axes denote individual data points, and the points denote feature vectors.
+With bag-of-words featurization for text documents, a feature is a word, and a feature vector contains the counts of this word in each document. 
+In this way, a word is represented as a “bag-of-documents.”  As we shall see in Chapter 4, these bag-of-documents vectors come from the matrix transpose of the bag-of-words vectors.
+
+Bag-of-words is not perfect. Breaking down a sentence into single words can destroy the semantic meaning.
+
+## Bag-of-n-Grams
+An n-gram is a sequence of n tokens. A word is essentially a 1-gram, also known as a unigram. After tokenization, the counting mechanism can collate individual tokens into word counts, or count overlapping sequences as n-grams.
+
+n-grams retain more of the original sequence structure of the text, and therefore the bag-of-n-grams representation can be more informative. However, this comes at a cost. Theoretically, with k unique words, there could be k2 unique 2-grams (also called bigrams). 
+
+## Filtering for Cleaner Features
+
+
+
