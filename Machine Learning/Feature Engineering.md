@@ -317,11 +317,55 @@ In this way, a word is represented as a “bag-of-documents.”  As we shall see
 Bag-of-words is not perfect. Breaking down a sentence into single words can destroy the semantic meaning.
 
 ## Bag-of-n-Grams
-An n-gram is a sequence of n tokens. A word is essentially a 1-gram, also known as a unigram. After tokenization, the counting mechanism can collate individual tokens into word counts, or count overlapping sequences as n-grams.
+* An n-gram is a sequence of n tokens. A word is essentially a 1-gram, also known as a unigram. After tokenization, the counting mechanism can collate individual tokens into word counts, or count overlapping sequences as n-grams.
 
-n-grams retain more of the original sequence structure of the text, and therefore the bag-of-n-grams representation can be more informative. However, this comes at a cost. Theoretically, with k unique words, there could be k2 unique 2-grams (also called bigrams). 
+* n-grams retain more of the original sequence structure of the text, and therefore the bag-of-n-grams representation can be more informative. However, this comes at a cost. Theoretically, with k unique words, there could be k2 unique 2-grams (also called bigrams). 
+
+* Bag-of-n-grams generates a lot more distinct n-grams. It increases the feature storage cost, as well as the computation cost of the model training and prediction stages. The number of data points remains the same, but the dimension of the feature space is now much larger. Hence, the data is much more sparse. The higher n is, the higher the storage and computation cost, and the sparser the data. For these reasons, longer n-grams do not always lead to improvements in model accuracy (or any other performance measure). People usually stop at n = 2 or 3. Longer n-grams are rarely used.
+
 
 ## Filtering for Cleaner Features
+
+### Stopwords
+Stopword lists are a way of weeding out common words that make for vacuous features.
+
+### Frequency-Based Filtering
+
+1. FREQUENT WORDS
+Frequency statistics are great for filtering out corpus-specific common words as well as general-purpose stopwords.
+
+1. RARE WORDS
+Rare words incur a large computation and storage cost for not much additional gain.
+
+Rare words can be easily identified and trimmed based on word count statistics. Alternatively, their counts can be aggregated into a special garbage bin, which can serve as an additional feature.
+
+1. Stemming
+Stemming is an NLP task that tries to chop each word down to its basic linguistic word stem form.
+
+## Atoms of Meaning: From Words to n-Grams to Phrases
+One way to combat the increase in sparsity and cost in bag-of-n-grams is to filter the n-grams and retain only the most meaningful phrases. 
+
+### Parsing and Tokenization
+1. Parsing is necessary when the string contains more than plain text.
+1. Tokenization turns the string—a sequence of characters—into a sequence of tokens. Each token can then be counted as a word. 
+
+### Collocation Extraction for Phrase Detection
+
+* In computational natural language processing (NLP), the concept of a useful phrase is called a collocation. In the words of Manning and Schütze (1999: 151), “A collocation is an expression consisting of two or more words that correspond to some conventional way of saying things.” 
+
+* Collocations are more meaningful than the sum of their parts.  Not every collocation is an n-gram. Conversely, not every n-gram is deemed a meaningful collocation.
+
+#### How to discover and extract collocations from text? 
+1. FREQUENCY-BASED METHODS
+A simple hack is to look at the most frequently occurring n-grams. 
+
+1. HYPOTHESIS TESTING FOR COLLOCATION EXTRACTION
+The key idea is to ask whether two words appear together more often than they would by chance. Hypothesis testing is a way to boil noisy data down to “yes” or “no” answers. It involves modeling the data as samples drawn from random distributions. 
+
+## CHUNKING AND PART-OF-SPEECH TAGGING
+* Chunking is a bit more sophisticated than finding n-grams, in that it forms sequences of tokens based on parts of speech, using rule-based models.
+
+
 
 
 
