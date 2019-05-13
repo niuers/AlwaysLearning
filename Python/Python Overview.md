@@ -78,7 +78,7 @@ When we say that a function has a local variable, we mean that the name is scope
 * Values can’t be deleted, only names can.
 
 ## Pass Argument
-Python is neither pass-by-value nor pass-by-reference, it is “pass-by-object-reference”, i.e. object references are passed by value.
+Python is neither pass-by-value nor pass-by-reference, it is [“pass-by-object-reference”](https://robertheaton.com/2014/02/09/pythons-pass-by-object-reference-as-explained-by-philip-k-dick/), i.e. object references are passed by value.
 
 
 
