@@ -1,0 +1,3 @@
+* Subspace
+* Affine set
+* Hyperplane
