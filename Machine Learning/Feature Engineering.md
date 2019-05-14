@@ -335,9 +335,7 @@ Stopword lists are a way of weeding out common words that make for vacuous featu
 Frequency statistics are great for filtering out corpus-specific common words as well as general-purpose stopwords.
 
 1. RARE WORDS
-Rare words incur a large computation and storage cost for not much additional gain.
-
-Rare words can be easily identified and trimmed based on word count statistics. Alternatively, their counts can be aggregated into a special garbage bin, which can serve as an additional feature.
+Rare words incur a large computation and storage cost for not much additional gain.Rare words can be easily identified and trimmed based on word count statistics. Alternatively, their counts can be aggregated into a special garbage bin, which can serve as an additional feature.
 
 1. Stemming
 Stemming is an NLP task that tries to chop each word down to its basic linguistic word stem form.
