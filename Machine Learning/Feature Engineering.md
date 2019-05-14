@@ -314,7 +314,7 @@ Mastering a subject is not just about knowing the definitions and being able to 
 With bag-of-words featurization for text documents, a feature is a word, and a feature vector contains the counts of this word in each document. 
 In this way, a word is represented as a “bag-of-documents.”  As we shall see in Chapter 4, these bag-of-documents vectors come from the matrix transpose of the bag-of-words vectors.
 
-Bag-of-words is not perfect. Breaking down a sentence into single words can destroy the semantic meaning.
+* Bag-of-words is not perfect. Breaking down a sentence into single words can destroy the semantic meaning.
 
 ## Bag-of-n-Grams
 * An n-gram is a sequence of n tokens. A word is essentially a 1-gram, also known as a unigram. After tokenization, the counting mechanism can collate individual tokens into word counts, or count overlapping sequences as n-grams.
@@ -362,8 +362,8 @@ A simple hack is to look at the most frequently occurring n-grams.
 1. HYPOTHESIS TESTING FOR COLLOCATION EXTRACTION
 The key idea is to ask whether two words appear together more often than they would by chance. Hypothesis testing is a way to boil noisy data down to “yes” or “no” answers. It involves modeling the data as samples drawn from random distributions. 
 
-## CHUNKING AND PART-OF-SPEECH TAGGING
-* Chunking is a bit more sophisticated than finding n-grams, in that it forms sequences of tokens based on parts of speech, using rule-based models.
+### CHUNKING AND PART-OF-SPEECH TAGGING
+* To generate longer phrases, there are other methods such as chunking or combining with part-of-speech (PoS) tagging.Chunking is a bit more sophisticated than finding n-grams, in that it forms sequences of tokens based on parts of speech, using rule-based models.
 
 
 
