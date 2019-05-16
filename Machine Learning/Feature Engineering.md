@@ -113,18 +113,15 @@ The Box-Cox formulation only works when the data is positive. For nonpositive da
 
 * A probability plot, or probplot, is an easy way to visually compare an empirical distribution of data against a theoretical distribution. This is essentially a scatter plot of observed versus theoretical quantiles. 
 
-## Feature Scaling or Normalization/feature normalization
+## Feature Scaling or Feature Normalization
+* No matter what the scaling method, feature scaling always divides the feature by a constant (known as the normalization constant). Therefore, it does not change the shape of the single-feature distribution. 
+* DON’T “CENTER” SPARSE DATA!
+   Use caution when performing min-max scaling and standardization on sparse features. Both subtract a quantity from the original feature value. For min-max scaling, the shift is the minimum over all values of the current feature; for standardization, it is the mean. If the shift is not zero, then these two transforms can turn a sparse feature vector where most values are zero into a dense one. This in turn could create a huge computational burden for the classifier, depending on how it is implemented (not to mention that it would be horrendous if the representation now included every word that didn’t appear in a document!). Bag-of-words is a sparse representation, and most classification libraries optimize for sparse inputs.
 
 ### Min-Max Scaling
 ### Standardization (Variance Scaling)
-### DON’T “CENTER” SPARSE DATA!
-Use caution when performing min-max scaling and standardization on sparse features. Both subtract a quantity from the original feature value. For min-max scaling, the shift is the minimum over all values of the current feature; for standardization, it is the mean. If the shift is not zero, then these two transforms can turn a sparse feature vector where most values are zero into a dense one. This in turn could create a huge computational burden for the classifier, depending on how it is implemented (not to mention that it would be horrendous if the representation now included every word that didn’t appear in a document!). Bag-of-words is a sparse representation, and most classification libraries optimize for sparse inputs.
-### ℓ^2 Normalization
-This technique normalizes (divides) the original feature value by what’s known as the ℓ^2 norm, also known as the Euclidean norm. 
-
-After ℓ2 normalization, the feature column has norm 1. This is also sometimes called ℓ2 scaling.
-
-* No matter the scaling method, feature scaling always divides the feature by a constant (known as the normalization constant). Therefore, it does not change the shape of the single-feature distribution. 
+### ℓ^2 Normalization or ℓ2 scaling
+* This technique normalizes (divides) the original feature value by the ℓ^2 norm or the Euclidean norm. The ℓ2 norm sums the squares of the values of the features across data points, then takes the square root. After ℓ2 normalization, the feature column has norm 1. 
 
 ## Interaction Features
 * A simple pairwise interaction feature is the product of two features. The analogy is the logical AND.
