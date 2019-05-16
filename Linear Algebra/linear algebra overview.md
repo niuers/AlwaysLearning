@@ -3,6 +3,7 @@
 * Differentiate matrix equations
 * Nonsingular
 * Mixture of Gaussians/Generative Model vs. bivariate Gaussian distributions
+* Voronoi tessellation
 
 # Vector Space
 ## Why we need vector space? [1]
