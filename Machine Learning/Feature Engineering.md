@@ -1,3 +1,8 @@
+* Deal with **class-imbalanced dataset**. Imbalanced datasets are problematic for modeling because the model will expend most of its effort fitting to the larger class. Since we have plenty of data in both classes, a good way to resolve the problem is to downsample the larger class (restaurants) to be roughly the same size as the smaller class (nightlife).
+* It’s essential to tune hyperparameters when comparing models or features. The default settings of a software package will always return a model.
+* training a linear classifier boils down to finding the best linear combination of features, which are column vectors of the data matrix. The solution space is characterized by the column space and the null space of the data matrix.
+The quality of the trained linear classifier directly depends upon the null space and the column space of the data matrix. A large column space means that there is little linear dependency between the features, which is generally good. The null space contains “novel” data points that cannot be formulated as linear combinations of existing data; a large null space could be problematic. 
+
 # Evaluation of Feature Engineering Procedure
 One needs to have a metric of machine learning model performance to evaluate the effectiveness of a feature engineering procedure. 
 First obtain a baseline performance, and compare performance against it after the feature engineering procedure.
@@ -362,6 +367,48 @@ The key idea is to ask whether two words appear together more often than they wo
 
 ### CHUNKING AND PART-OF-SPEECH TAGGING
 * To generate longer phrases, there are other methods such as chunking or combining with part-of-speech (PoS) tagging.Chunking is a bit more sophisticated than finding n-grams, in that it forms sequences of tokens based on parts of speech, using rule-based models.
+
+## TF-IDF (term frequency–inverse document frequency)
+1. tf-idf makes rare words more prominent and effectively ignores common words. It is closely related to the frequency-based filtering methods. Tf-idf transforms word count features through multiplication with a constant. Hence, it is an example of feature scaling.
+```
+bow(w, d) = # times word w appears in document d
+tf-idf(w, d) = bow(w, d) * log(N / (# documents in which word w appears))
+N is the total number of documents in the dataset. 
+```
+
+## Impacts of Feature Scaling on Linear Models
+
+1. For linear models like logistic regression, the features are used through the "data matrix". The columns represent all possible words in the vocabulary. The rows represent each document. It contains data points represented as fixed-length flat vectors. With bag-of-words vectors, the data matrix is also known as the "document-term matrix".
+
+1. Feature scaling methods are essentially column operations on the data matrix. In particular, tf-idf and ℓ2 normalization both multiply the entire column (an n-gram feature, for example) by a constant.
+
+1. The null space of the data matrix can be large for a couple of reasons. 
+   * First, many datasets contain data points that are very similar to one another. This means the effective row space is small compared to the number of data points in the dataset. 
+   * Second, the number of features can be much larger than the number of data points.
+   * Moreover, the number of distinct words usually grows with the number of documents in the dataset, so adding more documents would not necessarily decrease the feature-to-data ratio or reduce the null space.
+
+1. With bag-of-words (no feature scaling), the column space is relatively small compared to the number of features. There could be words that appear roughly the same number of times in the same documents. This would lead to the corresponding column vectors being nearly linearly dependent, which leads to the column space being not as full rank as it could be (see Appendix A for the definition of full rank). This is called a **rank deficiency**.
+
+1. Rank-deficient row space and column space lead to the model being overly provisioned for the problem. The linear model outfits a weight parameter for each feature in the dataset. If the row and column spaces were full rank (Strictly speaking, the row space and column space for a rectangular matrix cannot both be full rank. The maximum rank for both subspaces is the smaller of m (the number of rows) and n (the number of columns).), then the model would allow us to generate any target vector in the output space. When they are rank deficient, the model has more degrees of freedom than it needs. This makes it harder to pin down a solution.
+
+### Can feature scaling solve the rank deficiency problem of the data matrix? 
+The column space is defined as the linear combination of all column vectors (boldface indicates a vector): ```a1v1 + a2v2 + ... + anvn```. Feature scaling replaces a column vector with a constant multiple, say v˜1=cv1. But we can still generate the original linear combination by just replacing a1 with a˜1=a1/c. It appears that feature scaling does not change the rank of the column space. Similarly, feature scaling does not affect the rank of the null space, because one can counteract the scaled feature column by reverse scaling the corresponding entry in the weight vector.
+
+However, as usual, there is one catch. If the scalar is 0, then there is no way to recover the original linear combination; v1 is gone. If that vector is linearly independent from all the other columns, then we’ve effectively shrunk the column space and enlarged the null space.
+
+If that vector is not correlated with the target output, then this is effectively pruning away noisy signals, which is a good thing. This turns out to be the key difference between tf-idf and ℓ2 normalization. ℓ2 normalization would never compute a norm of zero, unless the vector contains all zeros. If the vector is close to zero, then its norm is also close to zero. Dividing by the small norm would accentuate the vector and make it longer.
+
+Tf-idf, on the other hand, can generate scaling factors that are close to zero, as shown in Figure 4-2. This happens when the word is present in a large number of documents in the training set. Such a word is likely not strongly correlated with the target vector. Pruning it away allows the solver to focus on the other directions in the column space and find better solutions (although the improvement in accuracy will probably not be huge, because there are typically few noisy directions that are prunable in this way).
+
+Where feature scaling—both ℓ2 and tf-idf—does have a telling effect is on the convergence speed of the solver. This is a sign that the data matrix now has a much smaller condition number (the ratio between the largest and smallest singular values—see Appendix A for a full discussion of these terms). In fact, ℓ2 normalization makes the condition number nearly 1. But it’s not the case that the better the condition number, the better the solution. During this experiment, ℓ2 normalization converged much faster than either BoW or tf-idf. But it is also more sensitive to overfitting: it requires much more regularization and is more sensitive to the number of iterations during optimization.
+
+Tf-idf and ℓ2 normalization do not improve the final classifier’s accuracy above plain bag-of-words. After acquiring some statistical modeling and linear algebra chops, we realize why: neither of them changes the column space of the data matrix.
+
+One small difference between the two is that tf-idf can “stretch” the word count as well as “compress” it. In other words, it makes some counts bigger, and others close to zero. Therefore, tf-idf could altogether eliminate uninformative words.
+
+Along the way, we also discovered another effect of feature scaling: it improves the condition number of the data matrix, making linear models much faster to train. Both ℓ2 normalization and tf-idf have this effect.
+
+To summarize, the lesson is: the right feature scaling can be helpful for classification. The right scaling accentuates the informative words and downweights the common words. It can also improve the condition number of the data matrix. The right scaling is not necessarily uniform column scaling.
 
 
 
