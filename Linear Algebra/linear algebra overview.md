@@ -16,7 +16,7 @@ Loosely speaking mathematicans invented vector space to mean any type of mathema
 A field is a set F of numbers with the property that if a, b ∈ F, then a+b, a−b, ab and a/b are also in F (assuming, of course, that b <> 0 in the expression a/b).
 ```
 
-### Definition of Vector Space
+### Definition of Vector Space[1][2]
 ```
 A vector space consists of a set V (elements of V are called vectors), a field F (elements of F are called scalars), 
 and two operations :
@@ -24,6 +24,11 @@ and two operations :
 • An operation called scalar multiplication that takes a scalar c ∈ F and a vector v ∈ V, and produces a new vector, written cv ∈ V.
 ```
 
+### Examples of Vector Space[2]
+
+## Affine Sets and Hyperplane
+
 ### References
 1. What is a Vector Space? Geoffrey Scott
 1. Mathematical Tools for Physics, Chapter 6, James Nearing. 
+
