@@ -49,7 +49,7 @@ For example, a point in real line, a line in 2d plane, a plane in 3d space.
 
 ### Affine Space
 
-## [Homogeneous Coordinates](http://wordsandbuttons.online/interactive_guide_to_homogeneous_coordinates.html)
+## [Homogeneous Coordinates](https://hackernoon.com/programmers-guide-to-homogeneous-coordinates-73cbfd2bcc65)
 
 
 ### References
