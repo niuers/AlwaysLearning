@@ -40,6 +40,26 @@ and two operations :
 
 ### Examples of Vector Space[2, Chapter 6]
 
+## Affine Space
+### [Why do we need affine space? ](http://www.cis.upenn.edu/~cis610/geombchap2.pdf)
+1. One reason is that the point in a vector space corresponding to the zero vector(0), called the origin, plays a special role, when there is really no reason to have a privileged origin. 
+1. The other reason is that certain notions, such as parallelism, are handled in an awkward manner in vector space. 
+1. But the deeper reason is that vector spaces and affine spaces really have **different geometries**. 
+   * The geometric properties of a vector space are invariant under **the group of bijective linear maps**. 
+   * The geometric properties of an affine space are invariant under **the group of bijective affine maps**.
+   * These two groups are **not isomorphic**. **Roughly speaking, there are more affine maps than linear maps.**
+1. Affine spaces provide a better framework for doing geometry. In particular, it is possible to deal with points, curves, surfaces, etc., in an **intrinsic manner**, that is, independently of any specific choice of a coordinate system. **Use coordinate systems only when needed!** Affine spaces are the right framework for dealing with motions, trajectories, and physical forces, among other things.
+
+### Linear Maps vs. Affine Maps
+### Isomorphic
+
+### Examples of Affine Space
+1. The solutions of the system ```Ax=b``` is an affine space, but not a vector space (linear space) in general.
+
+### Affine Space Definitions
+1. Almost every affine concept is the counterpart of some concept in linear algebra.
+
+
 ## Affine Sets and Hyperplane
 ### Hyperplane
 1. [A hyperplane in an n-dimensional Euclidean space is a flat, n-1 dimensional subset of that space](https://www.quora.com/Support-Vector-Machines-What-is-an-intuitive-explanation-of-hyperplane) that divides the space into two disconnected parts. 
