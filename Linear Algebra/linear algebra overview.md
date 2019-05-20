@@ -75,4 +75,4 @@ For example, a point in real line, a line in 2d plane, a plane in 3d space.
 ### References
 1. What is a Vector Space? Geoffrey Scott
 1. Mathematical Tools for Physics, James Nearing. 
-
+1. Linear Algebra for Computer Vision, Robotics, and Machine Learning, Jean Gallier and Jocelyn Quaintance, 2019
