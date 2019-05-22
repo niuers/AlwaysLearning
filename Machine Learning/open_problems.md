@@ -3,4 +3,5 @@
 
 ## [AI Complete](https://en.wikipedia.org/wiki/AI-complete)
 1. Machine translation
-1. 
+1. Explainability
+1. Robustness to a constantly changing environment
