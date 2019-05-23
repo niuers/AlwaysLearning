@@ -27,14 +27,21 @@ perform as well as fancier ones!
 1. It appears that KNN fits have a single parameter, the number of neighbors k, compared to the ```p``` parameters in least-squares fits. However the effective number of parameters of KNN is **```N/k```** and is generally bigger than ```p```, and decreases with increasing ```k```.
 1. It is also clear that we cannot use sum-of-squared errors on the training set as a criterion for picking ```k```, since we would always pick ```k = 1```!
 
-## Extend to Kernel methods
-1. Kernel methods use weights that decrease smoothly to zero with distance from the target point, rather than the effective ```0/1``` weights used by KNN.
-1. In high-dimensional spaces the distance kernels are modified to emphasize some variable more than others.
+## Extension of KNN
+1. Kernel methods such as kernel smoothers, that use weights that decrease smoothly to zero with distance from the target point, rather than the effective ```0/1``` weights used by KNN. In high-dimensional spaces the distance kernels are modified to emphasize some variable more than others.
+1. Local linear regression
+1. Linear basis expansions
+1. Projection pursuits and neural networks
 
 
-## Curse of dimensionality and why KNN doesn't work in high dimension? 
-1. **Definition**: As the dimensionality of the features space increases, the number configurations can grow exponentionally, and thus the number of configurations covered by an observation decreases. (Chris Albon)
-1. Sparse sampling makes local neighborhoods (which is used to approximate the theoretically optimal conditional expectation by KNN averaging) in high dimension no longer local: For example, to capture 1% or 10% of the data in a unit hypercube, we must cover 63% or 80% of the range of each input variable. Such neighborhoods are no longer local. Reducing the percentage of data dramatically does not help much either, since the fewer observations we average, the higher is the variance of our fit.
+## Why KNN doesn't work in high dimension and the Curse of dimensionality? 
+* **Definition**: As the dimensionality of the features space increases, the number configurations can grow exponentionally, and thus the number of configurations covered by an observation decreases. (Chris Albon). 
+
+### Why KNN failed in high dimension? 
+It becomes difficult to gather K observations close to a target point x0.
+1. Near neighborhoods tend to be spatially large, and estimates are biased.
+   1. Sparse sampling makes local neighborhoods (which is used to approximate the theoretically optimal conditional expectation by KNN averaging) in high dimension no longer local: For example, to capture 1% or 10% of the data in a unit hypercube, we must cover 63% or 80% of the range of each input variable. Such neighborhoods are no longer local. 
+1. Reducing the spatial size of the neighborhood means reducing K, and the variance of the estimate increases. The fewer observations we average, the higher is the variance of our fit.
 1. Most data points are closer to the boundary of the sample space than to any other data point: This makes prediction much more difficult near the edges of the training sample. One must extrapolate from neighboring sample points rather than interpolate between them.
 1. In high dimensions all feasible training samples (The samples are assumed to come from the unknown true probability distribution of data, and each sample has many data points) sparsely populate the input space: The [sampling density, i.e. the number of recorded samples per unit distance along a dimension](https://math.stackexchange.com/questions/283006/what-is-a-sampling-density-why-is-the-sampling-density-proportional-to-n1-p) is proportional to N<sup>1/p</sup>, where ```p``` is the dimension of the input space and ```N``` is the sample size. To keep the same density, the sample size has to grow exponentionally, which is infeasible with high dimension.
 1. The complexity of functions of many variables (i.e. the truth relationship of data) can grow exponentially with the dimension, and if we wish to be able to estimate such functions with the same accuracy as function in low dimensions, then we need the size of our training set to grow exponentially as well.
