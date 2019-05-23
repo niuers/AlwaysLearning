@@ -5,6 +5,14 @@
 1. Regression and classification can both be viewed as a task in function approximation.
 1. A large subset of the most popular techniques in use today are variants of these two simple procedures, i.e. Least Squares and KNN.
 
+# Philosophy
+* It is important to understand the ideas behind the various techniques, in order to know how and when to use them.
+* One has to understand the simpler methods first, in order to grasp the more sophisticated ones.
+* It is important to accurately assess the performance of a method, to know how well or how badly it is working. Simpler methods often
+perform as well as fancier ones!
+* 
+
+
 # Linear Model
 1. The linear model makes huge assumptions about structure and yields stable but possibly inaccurate preditions. It has low variance and potentially high bias.
 
