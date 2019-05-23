@@ -29,9 +29,6 @@ perform as well as fancier ones!
 
 ## Extension of KNN
 1. Kernel methods such as kernel smoothers, that use weights that decrease smoothly to zero with distance from the target point, rather than the effective ```0/1``` weights used by KNN. In high-dimensional spaces the distance kernels are modified to emphasize some variable more than others.
-1. Local linear regression
-1. Linear basis expansions
-1. Projection pursuits and neural networks
 
 
 ## Why KNN doesn't work in high dimension and the Curse of dimensionality? 
