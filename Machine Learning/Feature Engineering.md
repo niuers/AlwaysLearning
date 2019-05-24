@@ -233,8 +233,6 @@ A full treatment of feature selection is outside the scope of this book. Interes
 
 
 
-
-
 ## Structured Data Type
 ### Basic Checks
 
@@ -478,7 +476,53 @@ Along the way, we also discovered another effect of feature scaling: it improves
 
 To summarize, the lesson is: the right feature scaling can be helpful for classification. The right scaling accentuates the informative words and downweights the common words. It can also improve the condition number of the data matrix. The right scaling is not necessarily uniform column scaling.
 
+## Categorical Variables
+### Encoding Categorical Variables
+1. It is tempting to simply assign an integer, say from 1 to k, to each of k possible categories—but the resulting values would be orderable against each other, which should not be permissible for categories.
+1. One-hot Encoding
+   1. There will be one feature column for each category for a total of k feature columns.
+   1. The problem with one-hot encoding is that it allows for k degrees of freedom, while the variable itself needs only k–1.
+   1. One-hot encoding is redundant, which allows for multiple valid models for the same problem. In one-hot encoding “the sum of all bits must be equal to 1”. This introduces a linear dependency here. Linear dependent features are slightly annoying because they mean that the trained linear models will not be unique. Different linear combinations of the features can make the same predictions, so we would need to jump through extra hoops to understand the effect of a feature on the prediction.
+   1. With one-hot encoding, the intercept term represents the global mean of the target variable y, and each of the linear coefficients represents how much that category’s average y differs from the global mean.
+   1. The advantage is that each feature clearly corresponds to a category. 
+   1. Moreover, missing data can be encoded as the all-zeros vector, and the output should be the overall mean of the target variable.
 
+
+
+1. Dummy Encoding
+   1. Dummy coding removes the extra degree of freedom by using only k–1 features in the representation. One feature is thrown under the bus and represented by the vector of all zeros. This is known as the **reference category**.
+   1. There will be total k-1 feature columns, with zeroes for the records of the reference category in all k-1 feature columns.
+   1. With dummy coding, the bias coefficient represents the mean value of the response variable y for the reference category. The coefficient for the *i*th feature is equal to the difference between the mean response value for the *i*th category and the mean of the reference category. It encodes the effect of each category relative to the reference category, which may look strange.
+   1. Dummy coding is not redundant. They give rise to unique and interpretable models.
+   1. It cannot easily handle missing data, since the all-zeros vector is already mapped to the reference category. 
+
+
+
+1. Effect Coding
+   1. Effect coding is very similar to dummy coding, with the difference that the reference category is now represented by the vector of all –1’s. 
+   1. There will be total k-1 feature columns, with -1's for the records of the reference category in all k-1 feature columns.
+   1. The results in linear regression models that are even simpler to interpret. The intercept term represents the global mean of the target variable, and the individual coefficients indicate how much the means of the individual categories differ from the global mean. (This is called the main effect of the category or level, hence the name “effect coding.”) One-hot encoding actually came up with the same intercept and coefficients, but in that case there are linear coefficients for each category. In effect coding, no single feature represents the reference category, so the effect of the reference category needs to be separately computed as the negative sum of the coefficients of all other categories.
+   1. Effect coding is not redundant. They give rise to unique and interpretable models.
+   1. Effect coding avoids the problem of all-zero vector by using a different code for the reference category, but the vector of all –1’s is a dense vector, which is expensive for both storage and computation.
+
+### Dealing with Large Categorical Variables
+1. All three encoding techniques (One-hot, Dummy, Effect encoding) break down when the number of categories becomes very large. Different strategies are needed to handle extremely large categorical variables. The challenge is to find a good feature representation that is memory efficient, yet produces accurate models that are fast to train. 
+
+#### Solutions to large categorical variables
+1. Do nothing fancy with the encoding. Use a simple model that is cheap to train. Feed one-hot encoding into a linear model (logistic regression or linear support vector machine) on lots of machines.
+
+1. Compress the features. 
+   1. Feature hashing, popular with linear models
+      1. A variation of feature hashing adds a sign component, so that counts are either added to or subtracted from the hashed bin. Statistically speaking, this ensures that the inner products between hashed features are equal in expectation to those of the original features.
+      1. Feature hashing can be used for models that involve the inner product of feature vectors and coefficients, such as linear models and kernel methods. It has been demonstrated to be successful in the task of spam filtering
+      1. One downside to feature hashing is that the hashed features, being aggregates of original features, are no longer interpretable.
+
+   1. Bin counting, popular with linear models as well as trees
+      1. Rather than using the value of the categorical variable as the feature, instead use the conditional probability of the target under that value. In other words, instead of encoding the identity of the categorical value, we compute the association statistics between that value and the target that we wish to predict. For those familiar with naive Bayes classifiers, this statistic should ring a bell, because it is the conditional probability of the class under the assumption that all features are independent. Bin counting assumes that historical data is available for computing the statistics.
+      1. 
+#### Feature Hashing
+
+   
 
 
 
