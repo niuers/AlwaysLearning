@@ -1,3 +1,4 @@
+* Euclidean space
 * Hypercube
 * Differentiate matrix equations
 * Nonsingular
