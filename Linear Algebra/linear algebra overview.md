@@ -6,6 +6,8 @@
 * Voronoi tessellation
 * The Four Fundamental Subspaces of the Data Matrix
 * Relationship between Affine space, Vector Space, Subspace with Solutions of linear sysotems, and matrix's column space
+* isotropic
+* isomorphic
 
 
 1. One of the most fascinating theorems of linear algebra proves that every square matrix, no matter what numbers it contains, must map a certain set of vectors back to themselves with some scaling. In the general case of a rectangular matrix, it maps a set of input vectors into a corresponding set of output vectors, and its transpose maps those outputs back to the original inputs. The technical terminology is that square matrices have eigenvectors with eigenvalues, and rectangular matrices have left and right singular vectors with singular values.
