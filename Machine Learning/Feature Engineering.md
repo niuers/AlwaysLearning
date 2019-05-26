@@ -486,6 +486,15 @@ To summarize, the lesson is: the right feature scaling can be helpful for classi
    1. With one-hot encoding, the intercept term represents the global mean of the target variable y, and each of the linear coefficients represents how much that category’s average y differs from the global mean.
    1. The advantage is that each feature clearly corresponds to a category. 
    1. Moreover, missing data can be encoded as the all-zeros vector, and the output should be the overall mean of the target variable.
+   1. Space requirement:	O(n) using the sparse vector format, where n is the number of data points
+   1. Computation requirement: O(nk) under a linear model, where k is the number of categories
+   1. Pros
+      1. Easiest to implement; Potentially most accurate; Feasible for online learning
+   1. Cons
+      1. Computationally inefficient; Does not adapt to growing categories; Not feasible for anything other than linear models; Requires large-scale distributed optimization with truly large datasets
+    
+
+
 
 
 
@@ -516,13 +525,52 @@ To summarize, the lesson is: the right feature scaling can be helpful for classi
       1. A variation of feature hashing adds a sign component, so that counts are either added to or subtracted from the hashed bin. Statistically speaking, this ensures that the inner products between hashed features are equal in expectation to those of the original features.
       1. Feature hashing can be used for models that involve the inner product of feature vectors and coefficients, such as linear models and kernel methods. It has been demonstrated to be successful in the task of spam filtering
       1. One downside to feature hashing is that the hashed features, being aggregates of original features, are no longer interpretable.
+      1. Space requirement: O(n) using the sparse matrix format, where n is the number of data points
+      1. Computation requirement:	O(nm) under a linear or kernel model, where m is the number of hash bins
+      1. Pros: Easy to implement; Makes model training cheaper; Easily adaptable to new categories; Easily handles rare categories; Feasible for online learning
+      1. Cons: Only suitable for linear or kernelized models; Hashed features not interpretable; Mixed reports of accuracy
+
+
+
+
 
    1. Bin counting, popular with linear models as well as trees
       1. Rather than using the value of the categorical variable as the feature, instead use the conditional probability of the target under that value. In other words, instead of encoding the identity of the categorical value, we compute the association statistics between that value and the target that we wish to predict. For those familiar with naive Bayes classifiers, this statistic should ring a bell, because it is the conditional probability of the class under the assumption that all features are independent. Bin counting assumes that historical data is available for computing the statistics.
-      1. 
-#### Feature Hashing
+      1. We can include other features in addition to the historical probability: the raw counts themselves , the log-odds ratio, or any other derivatives of probability.
+      1. The odds ratio is usually defined between two binary variables. It looks at their strength of association by asking the question, “How much more likely is it for Y to be true when X is true?” For instance, we might ask, “How much more likely is Alice to click on an ad than the general population?” Here, X is the binary variable “Alice is the current user,” and Y is the variable “click on ad or not.” The computation uses what’s called the two-way contingency table (basically, four numbers that correspond to the four possible combinations of X and Y). Given an input variable X and a target variable Y, the odds ratio is defined as:
+   odds ratio=[P(Y=1|X=1)/P(Y=0|X=1)]/[P(Y=1|X=0)/P(Y=0|X=0)]
+   In our example, this translates as the ratio between “how much more likely is it that Alice clicks on an ad rather than does not click” and “how much more likely is it that other people click rather than not click.” 
+      1. More simply, we can just look at the numerator, which examines how much more likely it is that a single user (Alice) clicks on an ad versus not clicking. This is suitable for large categorical variables with many values, not just two
+      1. In terms of implementation, bin counting requires storing a map between each category and its associated counts. (The rest of the statistics can be derived on the fly from the raw counts.) Hence it requires O(k) space, where k is the number of unique values of the categorical variable.
+      1. Space requirement: O(n+k) for small, dense representation of each data point, plus the count statistics that must be kept for each category
+      1. Computation requirement:	O(n) for linear models; also usable for nonlinear models such as trees
+      1. Pros: Smallest computational burden at training time; Enables tree-based models; Relatively easy to adapt to new categories; Handles rare categories with back-off or count-min sketch; Interpretable
+      1. Cons: Requires historical data; Delayed updates required, not completely suitable for online learning; Higher potential for leakage
 
-   
+#### WHAT ABOUT RARE CATEGORIES?
+1. One way to deal with this is through back-off, a simple technique that accumulates the counts of all rare categories in a special bin. If the count is greater than a certain threshold, then the category gets its own count statistics. Otherwise, we use the statistics from the back-off bin. This essentially reverts the statistics for a single rare category to the statistics computed on all rare categories. When using the back-off method, it helps to also add a binary indicator for whether or not the statistics come from the back-off bin.
+
+1. count-min sketch: all the categories, rare or frequent alike, are mapped through multiple hash functions with an output range, m, much smaller than the number of categories, k. When retrieving a statistic, recompute all the hashes of the category and return the smallest statistic. Having multiple hash functions mitigates the probability of collision within a single hash function. The scheme works because the number of hash functions times m, the size of the hash table, can be made smaller than k, the number of categories, and still retain low overall collision probability.
+
+#### GUARDING AGAINST DATA LEAKAGE
+1. Since bin counting relies on historical data to generate the necessary statistics, it requires waiting through a data collection period, incurring a slight delay in the learning pipeline. Also, when the data distribution changes, the counts need to be updated. 
+1. The big problem here is that the statistics involve the target variable, which is what the model tries to predict. Using the output to compute the input features leads to a pernicious problem known as leakage. 
+1. If the bin-counting procedure used the current data point’s label to compute part of the input statistic, that would constitute direct leakage. One way to prevent that is by instituting strict separation between count collection (for computing bin-count statistics) and training. use an earlier batch of data points for counting, use the current data points for training (mapping categorical variables to historical statistics we just collected), and use future data points for testing. This fixes the problem of leakage, but introduces the aforementioned delay (the input statistics and therefore the model will trail behind current data).
+
+1. It turns out that there is another solution, based on differential privacy. A statistic is approximately leakage-proof if its distribution stays roughly the same with or without any one data point. In practice, adding a small random noise with distribution Laplace(0,1) is sufficient to cover up any potential leakage from a single data point. This idea can be combined with leaving-one-out counting to formulate statistics on current data (Zhang, 2015).
+
+#### COUNTS WITHOUT BOUNDS
+1. If the statistics are updated continuously given more and more historical data, the raw counts will grow without bounds. This could be a problem for the model. A trained model “knows” the input data up to the observed scale. A trained decision tree might say, “When x is greater than 3, predict 1.” A trained linear model might say, “Multiply x by 0.7 and see if the result is greater than the global average.” These might be the correct decisions when x lies between 0 and 5. But what happens beyond that? No one knows.
+
+1. When the input counts increase, the model will need to be retrained to adapt to the current scale. For this reason, it is often better to use normalized counts that are guaranteed to be bounded in a known interval. Another method is to take the log transform, which imposes a strict bound, but the rate of increase will be very slow when the count is very large.
+Neither method will guard against shifting input distributions (e.g., last year’s Barbie dolls are now out of style and people will no longer click on those ads). The model will need to be retrained to accommodate these more fundamental changes in input data distribution, or the whole pipeline will need to move to an online learning setting where the model is continuously adapting to the input.
+
+
+
+#### Which one to choose? 
+Linear models are cheaper to train and therefore can handle noncompressed representations such as one-hot encoding. Tree-based models, on the other hand, need to do repeated searches over all features for the right split, and are thus limited to small representations such as bin counting. Feature hashing sits in between those two extremes, but with mixed reports on the resulting accuracy.
+
+
 
 
 
