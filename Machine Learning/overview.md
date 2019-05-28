@@ -1,5 +1,6 @@
 * Effective number of parameters of KNN
 * cross-entropy
+* Smooth coordinate functions
 
 # Overview
 1. In the book ESL (The Element of Statistical Learning), the supervised learning (e.g. regression and classification) problem is treated as a problem in function approximation. In terms of function approximation, we imagine our parameterized function as a surface in p + 1 space, and what we observe are noisy realizations from it. (Section 2.6.3)
@@ -29,7 +30,7 @@ perform as well as fancier ones!
 
 ## Extension of KNN
 1. Kernel methods such as kernel smoothers, that use weights that decrease smoothly to zero with distance from the target point, rather than the effective ```0/1``` weights used by KNN. In high-dimensional spaces the distance kernels are modified to emphasize some variable more than others.
-
+1. Nearest-neighbor methods can be thought of as kernel methods having a more data-dependent metric.
 
 ## Why KNN (and other local methods) doesn't work in high dimension and the Curse of dimensionality? 
 * **Definition**: As the dimensionality of the features space increases, the number configurations can grow exponentionally, and thus the number of configurations covered by an observation decreases. (Chris Albon). 
@@ -53,7 +54,24 @@ It becomes difficult to gather K observations close to a target point x0.
 1. If we think of the supervised learning problem as function approximation, for finite number of training data, there can be infinitely many solutions: any function passing through the training points is a solution. We must therefore restrict the eligible solutions to a smaller set of functions. 
    * How to decide on the nature of the restritions (called **complexity restrictions**) is based on considerations outside of the data. 
    * This usually means some kind of regular behavior in small neighborhoods of the input space. 
-   * The strength of the constraint is dictated by the neighborhood size.
+   * The strength of the constraint is dictated by the neighborhood size. The larger the neighborhood size the stronger the constraint.
+   * The nature of the constraint depends on the metric used.
+
+# Classes of Restricted Estimators
+## Roughness Penalty and Bayesian Methods
+## Kernel methods and local regression
+1. These methods can be thought of as explicitly providing esti mates of the re-gression function or conditional expectation by specifyin g the nature of the local neighborhood, and of the class of regular functions fit ted locally.
+
+## Basis functions and dictionary methods
+1. Radial basis functionsare symmetricp -dimensional kernels located at particular centroids.
+1. A single-layer feed-forward neural network model with linear output weights can be thought of as an adaptive basis function method. 
+1. These adaptively chosen basis function methods are also known as dictio-narymethods, where one has available a possibly infinite set or di ctionary Dof candidate basis functions from which to choose, and models are builtup by employing some kind of search mechanism.
+
+# Model Selection and the Bias–Variance Tradeoff
+1. Unfortunately training error is not a good estimate of test error, as it does not properly account for model complexity.
+
+
+
 
 
 
