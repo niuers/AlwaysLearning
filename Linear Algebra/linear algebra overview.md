@@ -6,8 +6,6 @@
 * Voronoi tessellation
 * The Four Fundamental Subspaces of the Data Matrix
 * Relationship between Affine space, Vector Space, Subspace with Solutions of linear sysotems, and matrix's column space
-* isotropic
-* isomorphic
 
 
 1. One of the most fascinating theorems of linear algebra proves that every square matrix, no matter what numbers it contains, must map a certain set of vectors back to themselves with some scaling. In the general case of a rectangular matrix, it maps a set of input vectors into a corresponding set of output vectors, and its transpose maps those outputs back to the original inputs. The technical terminology is that square matrices have eigenvectors with eigenvalues, and rectangular matrices have left and right singular vectors with singular values.
@@ -74,6 +72,43 @@ For example, a point in real line, a line in 2d plane, a plane in 3d space.
 ### Affine Space
 
 ## [Homogeneous Coordinates](https://hackernoon.com/programmers-guide-to-homogeneous-coordinates-73cbfd2bcc65)
+
+# Isotropic
+1. Isotropy is uniformity in all orientations.
+1. In mathematics, an isotropic manifold is a manifold in which the geometry does not depend on directions. 
+1. Examples are the simply-connected space forms (the n-sphere, hyperbolic space, and R<sup>n</sup>) are isotropic.
+
+# Homomorphism
+1. In algebra, a [homomorphism](https://math.stackexchange.com/questions/242348/intuition-on-group-homomorphisms) is a structure-preserving map between two algebraic structures of the same type. 
+1. The concept of homomorphism has been generalized, under the name of morphism, to many other structures that either do not have an underlying set, or are not algebraic. This generalization is the starting point of category theory.
+1. Homomorphisms of vector spaces are also called **linear maps**, and their study is the object of linear algebra.
+
+## isomorphic
+1. In mathematics, an **isomorphism** is a **homomorphism** or **morphism** (i.e. a mathematical mapping) that can be reversed by an inverse morphism. Two mathematical objects are **isomorphic** if an isomorphism exists between them. An **automorphism** is an isomorphism whose source and target coincide. 
+1. The interest of isomorphisms lies in the fact that two isomorphic objects cannot be distinguished by using only the properties used to define morphisms; thus isomorphic objects may be considered the same as long as one considers only these properties and their consequences.
+1. For most algebraic structures, including groups and rings, a homomorphism is an isomorphism if and only if it is **bijective**.
+
+### Examples
+1. Since **log**  is a homomorphism that has an inverse (i.e. **exp**) that is also a homomorphism, **log**  is an isomorphism of groups.
+
+## Homomorphism vs. Isomorphism
+1. If there is an isomorphism ```h:A→B``` from an algebraic structure (monoid, group, ring, etc.) ```A``` onto another algebraic structure ```B``` of the same kind, then ```B``` is essentially just ```A``` ‘in disguise’: the two structures are essentially the same structure. In other words, Isomorphisms are the maps that preserve the structure exactly.
+1. **Homomorphisms preserve some of the structure**. (Here some may be all, since every isomorphism is a homomorphism. That is, it’s some in the sense of ⊆, not ⫋) They preserve the operations, but they may allow elements that ‘look enough alike’ to be collapsed to a single element. 
+   1. For instance, the usual **group homomorphism** from ```Z``` to ```Z/2Z``` (for which you use the notation *Z<sub>2</sub>*) ‘says’ that all even integers are essentially the same and collapses them all to the ```0``` of ```Z/2Z```. Similarly, it ‘says’ that all odd integers are essentially the same and collapses them all to the ```1``` of ```Z/2Z```. It wipes out any finer detail than odd versus even. When you learn in grade school that even + even = even, odd + even = odd, and so on, you’re essentially doing the same thing.)
+   1. The fact of being odd or even is called the **parity of integers**. In other words, as we pass from ```Z``` to ```P``` we deliberately lose every aspect of the integers except their parity; their parity alone (with its arithmetic) is retained, and faithfully preserved.
+
+1. The kernel of the homomorphism is a measure of how much detail is wiped out: the bigger the kernel, the more detail is lost. In the example of the last paragraph, the kernel is the entire set of even integers: the fact that all even integers are in the kernel says that they’re all being seen as somehow ‘the same’, and even more specifically, ‘the same’ as ```0```. An isomorphism has a trivial kernel: the only thing that it sees as looking like ```0``` is ```0``` itself, and no detail is lost.
+
+1. Another way to put it is that a homomorphic image of an algebraic structure is a kind of approximation to that structure. If the homomorphism is an isomorphism, it’s a perfect approximation; otherwise, it’s more or less crude approximation. As the kernel of the homomorphism gets bigger, the crudeness of the approximation increases. In the case of groups, if the kernel is the whole group, then the homomorphic image is the trivial group, and all detail is lost: all that’s left is the fact that we started with a group.
+
+1. Group homomorphisms are maps between groups which respect structure. This is easy to picture in the context of isomorphisms between groups. The size of the two groups is the same (even if they are infinite), and their structure behaves the same (even if the underlying sets and binary operations are different). So finding an isomorphism is basically like translating a passage between two languages.
+
+
+
+
+
+
+
 
 
 ### References
