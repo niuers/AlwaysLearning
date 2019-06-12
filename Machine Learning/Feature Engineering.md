@@ -159,6 +159,7 @@ The distribution of input features matters to some models more than others. For 
 
 ### Feature space vs Data space
 Collectively, a collection of data can be visualized in feature space as a point cloud. Conversely, we can visualize features in data space. 
+* Picture the set of data points in feature space. Each data point is a dot, and the whole set of data points forms a blob.
 
 ### Dealing with Counts
 It is a good idea to check the scale and determine whether to keep the data as raw numbers, convert them into binary values to indicate presence, or bin them into coarser granularity. 
@@ -570,6 +571,55 @@ Neither method will guard against shifting input distributions (e.g., last year�
 #### Which one to choose? 
 Linear models are cheaper to train and therefore can handle noncompressed representations such as one-hot encoding. Tree-based models, on the other hand, need to do repeated searches over all features for the right split, and are thus limited to small representations such as bin counting. Feature hashing sits in between those two extremes, but with mixed reports on the resulting accuracy.
 
+
+# PCA
+* Model-based techniques, on the other hand, require information from the data. For example, PCA is defined around the principal axes of the data.
+* Dimensionality reduction is about getting rid of “uninformative information” while retaining the crucial bits. 
+* we describe the column space of a data matrix as the span of all feature vectors. If the column space is small compared to the total number of features, then most of the features are linear combinations of a few key features. Linearly dependent features are a waste of space and computation power because the information could have been encoded in much fewer features.
+* The key idea here is to replace redundant features with a few new features that adequately summarize information contained in the original feature space.
+* One way to mathematically define “adequately summarize information” is to say that the new data blob should retain as much of the original volume as possible. We are squashing the data blob into a flat pancake, but we want the pancake to be as big as possible in the right directions. This means we need a way to measure volume.
+
+Volume has to do with distance. But the notion of distance in a blob of data points is somewhat fuzzy. One could measure the maximum distance between any two pairs of points, but that turns out to be a very difficult function to mathematically optimize. An alternative is to measure the average distance between pairs of points, or equivalently, the average distance between each point and its mean, which is the variance. This turns out to be much easier to optimize. (Life is hard. Statisticians have learned to take convenient shortcuts.) Mathematically, this translates into maximizing the variance of the data points in the new feature space.
+
+## Projection
+* PCA uses linear projection to transform data into the new feature space.
+* The next step is to compute the variance of the projections. 
+* The key lies in the sum-of-squares identity: the sum of a bunch of squared terms is equal to the squared norm of a vector whose elements are those terms, which is equivalent to the vector’s inner product with itself. 
+* This formulation of PCA presents the target more clearly: we look for an input direction that maximizes the norm of the output.
+* Once the principal components are found, we can transform the features using linear projection. 
+* the easiest way to implement PCA is by taking the singular value decomposition of the centered data matrix.
+
+* Due to the orthogonality constraint in the objective function, PCA transformation produces a nice side effect: the transformed features are no longer correlated. In other words, the inner products between pairs of feature vectors are zero.
+* Sometimes, it is useful to also normalize the scale of the features to 1. In signal processing terms, this is known as whitening. It results in a set of features that have unit correlation with themselves and zero correlation with each other. Mathematically, whitening can done by multiplying the PCA transformation with the inverse singular values
+* Whitening is independent from dimensionality reduction; one can perform one without the other. For example, zero-phase component analysis (ZCA) (Bell and Sejnowski, 1996) is a whitening transformation that is closely related to PCA, but that does not reduce the number of features. ZCA whitening uses the full set of principal components V without reduction, and includes an extra multiplication back onto VT
+* When seen as a method for eliminating linear correlation, PCA is related to the concept of whitening. Its cousin, ZCA, whitens the data in an interpretable way, but does not reduce dimensionality.
+
+* The modeling assumption here is that variance adequately represents the information contained in the data. 
+
+** Considerations and Limitations of PCA
+* When using PCA for dimensionality reduction, one must address the question of how many principal components (k) to use. Like all hyperparameters, this number can be tuned based on the quality of the resulting model. But there are also heuristics that do not involve expensive computational methods.
+  * One possibility is to pick k to account for a desired proportion of total variance. The variance of the projection onto the kth component is:
+
+║Xvk║2 =║uk σk║2 = σk2
+
+which is the square of the kth-largest singular value of X. The ordered list of singular values of a matrix is called its spectrum. Thus, to determine how many components to use, one can perform a simple spectral analysis of the data matrix and pick the threshold that retains enough variance.
+* Another method for picking k involves the intrinsic dimensionality of a dataset. This is a hazier concept, but can also be determined from the spectrum. Basically, if the spectrum contains a few large singular values and a number of tiny ones, then one can probably just harvest the largest singular values and discard the rest. Sometimes the rest of the spectrum is not tiny, but there’s a large gap between the head and the tail values. That would also be a reasonable cutoff. This method is requires visual inspection of the spectrum and hence cannot be performed as part of an automated pipeline
+* One key criticism of PCA is that the transformation is fairly complex, and the results are therefore hard to interpret. The principal components and the projected vectors are real-valued and could be positive or negative. The principal components are essentially linear combinations of the (centered) rows, and the projection values are linear combinations of the columns. In a stock returns application, for instance, each factor is a linear combination of time slices of stock returns. What does that mean? It is hard to express a human-understandable reason for the learned factors. Therefore, it is hard for analysts to trust the results. If you can’t explain why you should be putting billions of other people’s money into particular stocks, you probably won’t choose to use that model.
+
+* PCA is computationally expensive. It relies on SVD, which is an expensive procedure. To compute the full SVD of a matrix takes O(nd2 + d3) operations (Golub and Van Loan, 2012), assuming n ≥ d—i.e., there are more data points than features. Even if we only want k principal components, computing the truncated SVD (the k largest singular values and vectors) still takes O((n+d)2 k) = O(n2k) operations. This is prohibitive when there are a large number of data points or features.
+
+* It is difficult to perform PCA in a streaming fashion, in batch updates, or from a sample of the full data. Algorithms exist, but at the cost of reduced accuracy. One implication is that one should expect lower representational accuracy when projecting test data onto principal components found in the training set. As the distribution of the data changes, one would have to recompute the principal components in the current dataset.
+
+* Lastly, it is best not to apply PCA to raw counts (word counts, music play counts, movie viewing counts, etc.). The reason for this is that such counts often contain large outliers. As we know, PCA looks for linear correlations within the features. Correlation and variance statistics are very sensitive to large outliers; a single large number could change the statistics a lot. So, it is a good idea to first trim the data of large values , or apply a scaling transform like tf-idf or the log transform.
+
+** Use Cases
+* for small numbers of real-valued features, it is very much worth trying.
+* PCA transformation discards information from the data. Thus, the downstream model may be cheaper to train, but less accurate.
+* One of the coolest applications of PCA is in anomaly detection of time series. 
+
+* The two main things to remember about PCA are its mechanism (linear projection) and objective (to maximize the variance of projected data).
+
+# Nonlinear Featurization via K-Means Model Stacking
 
 
 
