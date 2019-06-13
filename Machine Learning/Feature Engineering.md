@@ -596,7 +596,7 @@ Volume has to do with distance. But the notion of distance in a blob of data poi
 
 * The modeling assumption here is that variance adequately represents the information contained in the data. 
 
-** Considerations and Limitations of PCA
+## Considerations and Limitations of PCA
 * When using PCA for dimensionality reduction, one must address the question of how many principal components (k) to use. Like all hyperparameters, this number can be tuned based on the quality of the resulting model. But there are also heuristics that do not involve expensive computational methods.
   * One possibility is to pick k to account for a desired proportion of total variance. The variance of the projection onto the kth component is:
 
@@ -612,7 +612,7 @@ which is the square of the kth-largest singular value of X. The ordered list of 
 
 * Lastly, it is best not to apply PCA to raw counts (word counts, music play counts, movie viewing counts, etc.). The reason for this is that such counts often contain large outliers. As we know, PCA looks for linear correlations within the features. Correlation and variance statistics are very sensitive to large outliers; a single large number could change the statistics a lot. So, it is a good idea to first trim the data of large values , or apply a scaling transform like tf-idf or the log transform.
 
-** Use Cases
+## Use Cases
 * for small numbers of real-valued features, it is very much worth trying.
 * PCA transformation discards information from the data. Thus, the downstream model may be cheaper to train, but less accurate.
 * One of the coolest applications of PCA is in anomaly detection of time series. 
