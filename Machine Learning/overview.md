@@ -1,6 +1,11 @@
 * Effective number of parameters of KNN
 * cross-entropy
 * Smooth coordinate functions
+* Degree of freedoms
+* Gauss-Markov Theorem
+* Triangle inequality
+* Gram-Schmit Procedure
+* 
 
 # Overview
 1. In the book ESL (The Element of Statistical Learning), the supervised learning (e.g. regression and classification) problem is treated as a problem in function approximation. In terms of function approximation, we imagine our parameterized function as a surface in p + 1 space, and what we observe are noisy realizations from it. (Section 2.6.3)
