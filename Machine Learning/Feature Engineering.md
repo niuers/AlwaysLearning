@@ -612,6 +612,8 @@ which is the square of the kth-largest singular value of X. The ordered list of 
 
 * Lastly, it is best not to apply PCA to raw counts (word counts, music play counts, movie viewing counts, etc.). The reason for this is that such counts often contain large outliers. As we know, PCA looks for linear correlations within the features. Correlation and variance statistics are very sensitive to large outliers; a single large number could change the statistics a lot. So, it is a good idea to first trim the data of large values , or apply a scaling transform like tf-idf or the log transform.
 
+* PCA is very useful when the data lies in a linear subspace like a flat pancake. But what if the data forms a more complicated shape?
+
 ## Use Cases
 * for small numbers of real-valued features, it is very much worth trying.
 * PCA transformation discards information from the data. Thus, the downstream model may be cheaper to train, but less accurate.
@@ -620,7 +622,14 @@ which is the square of the kth-largest singular value of X. The ordered list of 
 * The two main things to remember about PCA are its mechanism (linear projection) and objective (to maximize the variance of projected data).
 
 # Nonlinear Featurization via K-Means Model Stacking
+* A flat plane (linear subspace) can be generalized to a manifold (nonlinear subspace), which can be thought of as a surface that gets stretched and rolled in various ways. If a linear subspace is a flat sheet of paper, then a rolled up sheet of paper is a simple example of a nonlinear manifold. Informally, this is called a Swiss roll.
+* Once rolled, a 2D plane occupies 3D space. Yet it is essentially still a 2D object. In other words, it has low intrinsic dimensionality, a concept we’ve already touched upon in “Intuition”. If we could somehow unroll the Swiss roll, we’d recover the 2D plane. This is the goal of nonlinear dimensionality reduction, which assumes that the manifold is simpler than the full dimension it occupies and attempts to unfold it.
+* The key observation is that even when a big manifold looks complicated, the local neighborhood around each point can often be well approximated with a patch of flat surface. In other words, the patches to encode global structure using local structure.3 Nonlinear dimensionality reduction is also called **nonlinear embedding** or **manifold learning**. Nonlinear embeddings are useful for aggressively compressing high-dimensional data into low-dimensional data. They are often used for visualization in two or three dimensions.
+* Clustering algorithms are usually not presented as techniques for local structure learning. But they in fact enable just that. Points that are close to each other (where “closeness” can be defined by a chosen metric) belong to the same cluster. Given a clustering, a data point can be represented by its cluster membership vector. If the number of clusters is smaller than the original number of features, then the new representation will have fewer dimensions than the original; the original data is compressed into a lower dimension. We will unpack this idea in this chapter.
 
+* However, when data is spread out fairly uniformly, there is no longer a correct number of clusters. In this case, the role of a clustering algorithm is **vector quantization**, i.e., partitioning the data into a finite number of chunks. The number of clusters can be selected based on acceptable approximation error when using quantized vectors instead of the original ones.
+
+* 
 
 
 
