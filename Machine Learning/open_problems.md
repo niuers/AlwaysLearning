@@ -1,5 +1,11 @@
 1. [Requests for Research 2.0](https://openai.com/blog/requests-for-research-2/)
 1. How to train neural networks with less data but still achieve the same effect?
+1. Explainable machine learning[1]
+1. Lightweight machine learning and edge computing
+1. Quantum Machine Learning
+1. Simple and elegant natural laws
+1. Improvisational learning
+1. Social machine learning
 
 ## [AI Complete](https://en.wikipedia.org/wiki/AI-complete)
 1. Machine translation
@@ -15,3 +21,5 @@
 1. Bias in data and algorithms
 1. Deploying models at scale
 
+# References
+1. [Machine Learning: Research hotspots in the next ten years], November 14, 2018. (https://www.microsoft.com/en-us/research/lab/microsoft-research-asia/articles/machine-learning-research-hotspots/)
