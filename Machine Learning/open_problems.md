@@ -22,4 +22,4 @@
 1. Deploying models at scale
 
 # References
-1. [Machine Learning: Research hotspots in the next ten years] (https://www.microsoft.com/en-us/research/lab/microsoft-research-asia/articles/machine-learning-research-hotspots/), November 14, 2018.
+1. [Machine Learning: Research hotspots in the next ten years](https://www.microsoft.com/en-us/research/lab/microsoft-research-asia/articles/machine-learning-research-hotspots/), November 14, 2018.
