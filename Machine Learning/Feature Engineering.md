@@ -688,6 +688,20 @@ Combined with techniques for handling categorical variables and time series, k-m
 * Both of them essentially compute histograms of gradient orientations.
 
 ### Image Gradients
+* The difference in value between neighboring pixels is called an image gradient. This involves two 1D difference operations that can be handily represented by a vector mask or filter. 
+* To apply a filter to an image, we perform a convolution. It involves flipping the filter and taking the inner product with a small patch of the image, then moving to the next patch.
+* The horizontal gradient picks out strong vertical patterns such as the inner edges of the cat’s eyes, while the vertical gradient picks out strong horizontal patterns such as the whiskers and the upper and lower lids of the eyes. This might seem a little paradoxical at first, but it makes sense once we think about it a bit more. The horizontal (x) gradient identifies changes in the horizontal direction. A strong vertical pattern spans multiple y pixels at roughly the same x position. Hence, vertical patterns result in horizontal differences in pixel values. This is what our eyes detect as well. 
+
+### Gradient Orientation Histograms
+* How can we summarize the image gradients in a neighborhood? A statistician would answer, “Look at the distribution!” SIFT and HOG both take this path. In particular, they compute (normalized) histograms of the gradient vectors as image features.
+* SIFT and HOG settled on a scheme where the image gradients are binned by their orientation angle θ, weighted by the magnitude of each gradient. 
+
+* HOG and SIFT both settled on a two-level representation  of image neighborhoods: first adjacent pixels are organized into cells, and neighboring cells are then organized into blocks. An orientation histogram is computed for each cell, and the cell histogram vectors are concatenated to form the final feature descriptor for the whole block.
+
+## Learning Image Features with Deep Neural Networks
+* The convolution operator captures the effect of a linear system, which multiplies the incoming signal with its response function, summing over current responses to all past input.
+
+
 
 
 
