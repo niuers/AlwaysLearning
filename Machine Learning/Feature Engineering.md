@@ -707,3 +707,7 @@ Combined with techniques for handling categorical variables and time series, k-m
 
 
 
+
+# References
+1. Feature Engineering for Machine Learning, by Alice Zheng; Amanda Casari, 2018
+1. Feature Engineering Made Easy, by Sinan Ozdemir; Divya Susarla, 2018
