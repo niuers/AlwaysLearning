@@ -624,12 +624,72 @@ which is the square of the kth-largest singular value of X. The ordered list of 
 # Nonlinear Featurization via K-Means Model Stacking
 * A flat plane (linear subspace) can be generalized to a manifold (nonlinear subspace), which can be thought of as a surface that gets stretched and rolled in various ways. If a linear subspace is a flat sheet of paper, then a rolled up sheet of paper is a simple example of a nonlinear manifold. Informally, this is called a Swiss roll.
 * Once rolled, a 2D plane occupies 3D space. Yet it is essentially still a 2D object. In other words, it has low intrinsic dimensionality, a concept we’ve already touched upon in “Intuition”. If we could somehow unroll the Swiss roll, we’d recover the 2D plane. This is the goal of nonlinear dimensionality reduction, which assumes that the manifold is simpler than the full dimension it occupies and attempts to unfold it.
-* The key observation is that even when a big manifold looks complicated, the local neighborhood around each point can often be well approximated with a patch of flat surface. In other words, the patches to encode global structure using local structure.3 Nonlinear dimensionality reduction is also called **nonlinear embedding** or **manifold learning**. Nonlinear embeddings are useful for aggressively compressing high-dimensional data into low-dimensional data. They are often used for visualization in two or three dimensions.
-* Clustering algorithms are usually not presented as techniques for local structure learning. But they in fact enable just that. Points that are close to each other (where “closeness” can be defined by a chosen metric) belong to the same cluster. Given a clustering, a data point can be represented by its cluster membership vector. If the number of clusters is smaller than the original number of features, then the new representation will have fewer dimensions than the original; the original data is compressed into a lower dimension. We will unpack this idea in this chapter.
+* The key observation is that even when a big manifold looks complicated, the local neighborhood around each point can often be well approximated with a patch of flat surface. In other words, the patches to encode global structure using local structure. **Nonlinear dimensionality reduction** is also called **nonlinear embedding** or **manifold learning**. Nonlinear embeddings are useful for aggressively compressing high-dimensional data into low-dimensional data. They are often used for visualization in two or three dimensions. The goal of feature engineering, however, isn’t so much to make the feature dimensions as low as possible, but to arrive at the right features for the task. In this chapter, the right features are those that represent the spatial characteristics of the data.
 
-* However, when data is spread out fairly uniformly, there is no longer a correct number of clusters. In this case, the role of a clustering algorithm is **vector quantization**, i.e., partitioning the data into a finite number of chunks. The number of clusters can be selected based on acceptable approximation error when using quantized vectors instead of the original ones.
+* **Clustering algorithms** are usually not presented as techniques for **local structure learning**. But they in fact enable just that. Points that are close to each other (where “closeness” can be defined by a chosen metric) belong to the same cluster. Given a clustering, a data point can be represented by its cluster membership vector. If the number of clusters is smaller than the original number of features, then the new representation will have fewer dimensions than the original; the original data is compressed into a lower dimension. Compared to nonlinear embedding techniques, clustering may produce more features. But if the end goal is feature engineering instead of visualization, this is not a problem.
 
-* 
+* The clustering algorithm, k-means,  performs **nonlinear manifold feature extraction**. 
+
+## Clustering as Surface Tiling
+
+* When data is spread out fairly uniformly (instead of clustered), there is no longer a correct number of clusters. In this case, the role of a clustering algorithm is **vector quantization**, i.e., partitioning the data into a finite number of chunks. The number of clusters can be selected based on acceptable approximation error when using quantized vectors instead of the original ones.
+* Visually, this usage of k-means can be thought of  as covering the data surface with patches. This is indeed what we get if we run k-means on a Swiss roll dataset
+* The problem is that if we pick a k that is too small, then the results won’t be so nice from a manifold learning perspective. Data from very different sections of the manifold being mapped to the same clusters
+* If the data is distributed uniformly throughout the space, then picking the right k boils down to a **sphere-packing problem**. In d dimensions, one could fit roughly 1/r^d spheres of radius r. Each k-means cluster is a sphere, and the radius is the maximum error of representing points in that sphere with the centroid. So, if we are willing to tolerate a maximum approximation error of r per data point, then the number of clusters is O(1/r^d), where d is the dimension of the original feature space of the data.
+* Uniform distribution is the worst-case scenario for k-means. If data density is not uniform, then we will be able to represent more data with fewer clusters. In general, it is difficult to tell how data is distributed in high-dimensional space. One can be conservative and pick a larger k, but it can’t be too large, because k will become the number of features for the next modeling step.
+
+## k-Means Featurization for Classification
+* When using k-means as a featurization procedure, a data point can be represented by its cluster membership (a sparse one-hot encoding of the cluster membership categorical variable
+* If a target variable is also available, then we have the choice of giving that information as a hint to the clustering procedure. One way to incorporate target information is to simply include the target variable as an additional input feature to the k-means algorithm. Since the objective is to minimize the total Euclidean distance over all input dimensions, the clustering procedure will attempt to balance similarity in the target value as well as in the original feature space. The target values can be scaled to get more or less attention from the clustering algorithm. Larger differences in the target will produce clusters that pay more attention to the classification boundary.
+
+* Clustering algorithms analyze the spatial distribution of data. Therefore, k-means featurization creates a compressed spatial index of the data which can be fed into the model in the next stage.  This is an example of **model stacking**.
+
+## Alternative Dense Featurization
+* Instead of one-hot cluster membership, a data point can also be represented by a dense vector of its inverse distance to each cluster center. One-hot cluster membership results in a very lightweight, sparse representation, but one might need a larger k to represent data of complex shapes. Inverse distance representation is dense, which could be more expensive for the modeling step, but one might be able to get away with a smaller k.
+
+* A compromise between sparse and dense is to retain inverse distances for only p of the closest clusters. But now p is an extra hyperparameter to tune.
+
+## Pros, Cons, and Gotchas
+* Using k-means to turn spatial data into features is an example of model stacking, where the input to one model is the output of another. Another example of stacking is to use the output of a decision tree–type model (random forest or gradient boosting tree) as input to a linear classifier. 
+* The key intuition with stacking is to push the nonlinearities into the features and use a very simple, usually linear model as the last layer. 
+* The simple model at the top level can be quickly adapted to the changing distributions of online data. This is a great trade-off between accuracy and speed, and this strategy is often used in applications like targeted advertising that require fast adaptation to changing data distributions.
+
+* Use sophisticated base layers (often with expensive models) to generate good (often nonlinear) features, combined with a simple and fast top-layer model. This often strikes the right balance between model accuracy and speed.
+
+* For k-means, the training time is O(nkd) because each iteration involves computing the d-dimensional distance between every data point and every centroid (k). We optimistically assume that the number of iterations is not a function of n, though this may not be true in all cases. Prediction requires computing the distance between the new data point and each of the k centroids, which is O(kd). The storage space requirement is O(kd), for the coordinates of the k centroids.
+* Logistic regression training and prediction are linear in both the number of data points and feature dimensions. RBF SVM training is expensive because it involves computing the kernel matrix for every pair of input data. RBF SVM prediction is less expensive than training; it is linear in the number of support vectors s and the feature dimension d. GBT training and prediction are linear in data size and the size of the model (t trees, each with at most 2m leaves, where m is the maximum depth of the tree). A naive implementation of kNN requires no training time at all because the training data itself is essentially the model. The cost is paid at prediction time, where the input must be evaluated against each of the original training points and partially sorted to retrieve the k closest neighbors.
+* Overall, k-means + LR is the only combination that is linear (with respect to the size of training data, O(nd), and model size, O(kd)) at both training and prediction time. The complexity is most similar to that of GBT, which has costs that are linear in the number of data points, the feature dimension, and the size of the model (O(2^mt)).
+
+* k-means featurization is useful for real-valued, bounded numeric features that form clumps of dense regions in space. The clumps can be of any shape, because we can just increase the number of clusters to approximate them. (Unlike in the classic clustering setup, we are not concerned with discovering the “true” number of clusters; we only need to cover them.)
+
+* k-means cannot handle feature spaces where the Euclidean distance does not make sense—i.e., weirdly distributed numeric variables or categorical variables. If the feature set contains those variables, then there are several ways to handle them:
+
+  * Apply k-means featurization only on the real-valued, bounded numeric features.
+  * Define a custom metric to handle multiple data types and use the k-medoids algorithms. (k-medoids is analogous to k-means but allows for arbitrary distance metrics.)
+Convert categorical variables to binning statistics (see “Bin Counting”), then featurize them using k-means.
+Combined with techniques for handling categorical variables and time series, k-means featurization can be adapted to handle the kind of rich data that often appears in customer marketing and sales analytics. The resulting clusters can be thought of as user segments, which are very useful features for the next modeling step.
+
+* This chapter illustrated the concept of model stacking using a somewhat unconventional approach: combining supervised k-means with a simple linear classifier. k-means is usually used as an unsupervised modeling method to find dense clusters of data points in feature space. Here, however, k-means is optionally given the class labels as input. This helps k-means to find clusters that better align with the boundary between classes. 
+
+* Deep learning takes model stacking to a whole new level by layering neural networks on top of one another. Two recent winners of the ImageNet Large Scale Visual Recognition Challenge involved 13 and 22 layers of neural networks. They take advantage of the availability of lots of unlabeled training images and look for combinations of pixels that yield good image features. The technique in this chapter separately trains the k-means featurizer from the linear classifier. But it’s possible to jointly optimize the featurizer and the classier. As we shall see, deep learning training takes the latter route.
+
+## Potential for Data Leakage
+* Those who remember our caution regarding data leakage (see “Guarding against data leakage”) might ask whether including the target variable in the k-means featurization step would cause such a problem. The answer is “yes,” but not as much in the case of bin counting. If we use the same dataset for learning the clusters and building the classification model, then information about the target will have leaked into the input variables. As a result, accuracy evaluations on the training data will probably be overly optimistic, but the bias will go away when evaluating on a hold-out validation set or test set. Furthermore, the leakage will not be as bad as in the case of bin-counting statistics (see “Bin Counting”), because the lossy compression of the clustering algorithm will have abstracted away some of that information. To be extra careful about preventing leakage, hold out a separate dataset for deriving the clusters, just like in the case of bin counting.
+
+
+# Automating the Featurizer: Image Feature Extraction and Deep Learning
+* Machine learning models require semantically meaningful features to make semantically meaningful predictions. 
+## The Simplest Image Features (and Why They Don’t Work)
+* color information is probably not enough to characterize an image.
+* Another simple idea is to measure the pixel value differences between images, but it is too stringent as a similarity measure. 
+* The problem is that individual pixels do not carry enough semantic information about the image. Therefore, they are bad atomic units for analysis.
+
+## Manual Feature Extraction: SIFT (Scale Invariant Feature Transform) and HOG (Histogram of Oriented Gradients)
+* Both of them essentially compute histograms of gradient orientations.
+
+### Image Gradients
+
+
 
 
 
