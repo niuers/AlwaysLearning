@@ -1,39 +1,4 @@
 # Apache Spark
-## Definition
-Apache Spark is a unified analytics (computing) engine (and a set of libraries) for large-scale (parallel) data processing 
-(on computer clusters).
-
-Spark is a distributed programming model in which the user specifies transformations. 
-Multiple transformations build up a directed acyclic graph of instructions. 
-An action begins the process of executing that graph of instructions, as a single job, 
-by breaking it down into stages and tasks to execute across the cluster. 
-The logical structures that we manipulate with transformations and actions are DataFrames and Datasets. 
-To create a new DataFrame or Dataset, you call a transformation. 
-To start computation or convert to native language types, you call an action.
-
-Spark is effectively a programming language of its own. 
-Internally, Spark uses an engine called Catalyst that maintains its own type information through the planning and processing of work. 
-Spark will convert an expression written in an input language (e.g. Python) to Spark's internal Catalyst representation of that same type 
-information. It then will operate on that internal representation.
-
-## Characteristics
-1. *Unified*: It supports a wide range of data analytics tasks, simple data loading, SQL queries, machine learning and streaming computation, over the same computing engine and with a consistent set of APIs.
-1. *Analytics/Computing Engine*: It's not a persistence store. Compare with Hadoop Architecture, which has HDFS as storage and MapReduce as computing engine.
-1. *Libraries*: Spark Core, Spark SQL, MLlib, Spark Streaming/Structured Streaming, GraphX
-1. High Performance for both batch and streaming data: DAG scheduler, a query optimizer, and a physical execution engine. Spark is scalable, massively parallel, and in-memory execution.
-1. Ease of Use: Spark offers over 80 high-level operators that make it easy to build parallel apps. And you can use it interactively from the Scala, Python, R, and SQL shells.
-1. Generality: SQL, Streaming, Graph and ML
-1. Runs Everywhere: Spark runs on Hadoop, Apache Mesos, Kubernetes, standalone, or in the cloud. It can access diverse data sources.
-1. Open Source
-
-
-# Cluster Manager
-The cluster manager is responsible for maintaining a cluster of machines that will run your Spark Application(s). It is responsible for keeping track of the resources available.
-1. Can be one of Standalone cluster manager, YARN, or Mesos etc.
-1. The manager starts a master and many worker nodes.
-1. When it comes time to actually run a Spark Application, we request resources from the cluster manager to run it. 
-Depending on how our application is configured, this can include a place to run the Spark driver or might be just resources for the executors for our Spark Application. 
-Over the course of Spark Application execution, the cluster manager will be responsible for managing the underlying machines that our application is running on.
 
 # Spark Application
 Spark application consists of one driver process and several executor processes.
